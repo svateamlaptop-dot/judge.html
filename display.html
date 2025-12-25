@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wushu Rankings</title>
+  <style>
+    body { background:black;color:white;font-family:sans-serif;padding:40px }
+    select { padding:6px;margin-bottom:20px }
+    .row { font-size:26px;margin:10px 0 }
+    .rank { color:gold;margin-right:10px }
+    .cat { color:#aaa;font-size:16px }
+  </style>
+</head>
+<body>
+
+<h1>Wushu Taolu Rankings</h1>
+
+<select id="filter">
+  <option value="ALL">All Categories</option>
+</select>
+
+<div id="list"></div>
+
+<script>
+function refresh() {
+  const athletes = JSON.parse(localStorage.getItem("athletes")) || [];
+  const filter = document.getElementById("filter").value;
+
+  // fill dropdown
+  const cats = [...new Set(athletes.map(a => a.category))];
+  filterSelect.innerHTML = '<option value="ALL">All Categories</option>';
+  cats.forEach(c => {
+    filterSelect.innerHTML += `<option value="${c}">${c}</option>`;
+  });
+
+  let shown = athletes;
+  if (filter !== "ALL") {
+    shown = athletes.filter(a => a.category === filter);
+  }
+
+  shown.sort((a,b) => b.score - a.score);
+
+  list.innerHTML = "";
+  shown.forEach((a,i) => {
+    list.innerHTML += `
+      <div class="row">
+        <span class="rank">#${i+1}</span>
+        ${a.name} — <strong>${a.score}</strong>
+        <span class="cat">(${a.category})</span>
+      </div>`;
+  });
+}
+
+const filterSelect = document.getElementById("filter");
+setInterval(refresh, 300);
+</script>
+
+</body>
+</html>
